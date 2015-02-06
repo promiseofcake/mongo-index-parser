@@ -1,6 +1,11 @@
+#!/usr/bin/env node
 // script to parse system.index json into ensureindex queries
+// to obtain index list from mongo:
+// mongoexport --host {hostname} {dbname} --username {username} --password {password} -d {dbname} -c system.indexes --jsonArray -o {outputfilename}.json
+
 // pass filename as argument to the indexer.js file.
 // ex: node indexer.js vsco.json
+
 fs = require('fs');
 
 var fileName = process.argv.slice(2)[0];
@@ -25,6 +30,8 @@ fs.readFile(fileName, 'utf8', function (err,data) {
     return console.log('Error! file does not exist: ' + fileName);
   }
 
+  var dbName;
+
   // parsed commands
   var results = {};
 
@@ -33,7 +40,11 @@ fs.readFile(fileName, 'utf8', function (err,data) {
 
   // iterate over items in the JSON array
   for (var i = 0; i < jsonData.length; i++) {
-    var collection = jsonData[i].ns.split('\.')[1];
+
+    var ns = jsonData[i].ns.split('\.');
+
+    dbName = ns[0];
+    var collection = ns[1];
 
     // skip for internal mongo collections
     if (skippedCollections.indexOf(collection) !== -1) {
@@ -66,7 +77,7 @@ fs.readFile(fileName, 'utf8', function (err,data) {
   // sort by collection for output
   keyIndex = returnSortedIndexKeys(results);
   // output queries
-  createEnsureIndexQueries(keyIndex, results);
+  createEnsureIndexQueries(dbName, keyIndex, results);
 });
 
 var returnSortedIndexKeys = function(resultData) {
@@ -78,7 +89,9 @@ var returnSortedIndexKeys = function(resultData) {
   return indexKeys;
 };
 
-var createEnsureIndexQueries = function(collectionIndex, statementData) {
+var createEnsureIndexQueries = function(dbName, collectionIndex, statementData) {
+  console.log('// Create Indexes for ' + dbName);
+  console.log('use ' + dbName + ';');
   collectionIndex.forEach(function(collection) {
     console.log('//' + collection + ' indices');
 
