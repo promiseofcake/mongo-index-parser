@@ -30,8 +30,6 @@ fs.readFile(fileName, 'utf8', function (err,data) {
     return console.log('Error! file does not exist: ' + fileName);
   }
 
-  var dbName;
-
   // parsed commands
   var results = {};
 
@@ -42,8 +40,6 @@ fs.readFile(fileName, 'utf8', function (err,data) {
   for (var i = 0; i < jsonData.length; i++) {
 
     var ns = jsonData[i].ns.split('\.');
-
-    dbName = ns[0];
     var collection = ns[1];
 
     // skip for internal mongo collections
@@ -77,7 +73,7 @@ fs.readFile(fileName, 'utf8', function (err,data) {
   // sort by collection for output
   keyIndex = returnSortedIndexKeys(results);
   // output queries
-  createEnsureIndexQueries(dbName, keyIndex, results);
+  createEnsureIndexQueries(keyIndex, results);
 });
 
 var returnSortedIndexKeys = function(resultData) {
@@ -89,9 +85,7 @@ var returnSortedIndexKeys = function(resultData) {
   return indexKeys;
 };
 
-var createEnsureIndexQueries = function(dbName, collectionIndex, statementData) {
-  console.log('// Create Indexes for ' + dbName);
-  console.log('use ' + dbName + ';');
+var createEnsureIndexQueries = function(collectionIndex, statementData) {
   collectionIndex.forEach(function(collection) {
     console.log('//' + collection + ' indices');
 
