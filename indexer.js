@@ -84,7 +84,9 @@ var createEnsureIndexQueries = function(collectionIndex, statementData) {
   collectionIndex.forEach(function(collection) {
     console.log('//' + collection + ' indices');
 
-    statementData[collection].forEach(function(indexQuery){
+    var sortedQuery = statementData[collection].sort();
+
+    sortedQuery.forEach(function(indexQuery){
       buildIndexQuery(collection, indexQuery);
     });
 
