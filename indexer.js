@@ -49,6 +49,7 @@ fs.readFile(fileName, 'utf8', function (err,data) {
 
     // index keys
     var indexKey = jsonData[i].key;
+    indexKey = sortObjectByKey(indexKey);
 
     // index query options
     var queryOptions = {};
@@ -57,6 +58,8 @@ fs.readFile(fileName, 'utf8', function (err,data) {
         queryOptions[item] = jsonData[i][item];
       }
     });
+
+    queryOptions = sortObjectByKey(queryOptions);
 
     // build query command
     var queryString = [
@@ -71,19 +74,11 @@ fs.readFile(fileName, 'utf8', function (err,data) {
   }
 
   // sort by collection for output
-  keyIndex = returnSortedIndexKeys(results);
+  var keyIndex = Object.keys(results).sort();
+
   // output queries
   createEnsureIndexQueries(keyIndex, results);
 });
-
-var returnSortedIndexKeys = function(resultData) {
-  var indexKeys = [];
-  for (var index in resultData) {
-    indexKeys.push(index);
-  }
-  indexKeys.sort();
-  return indexKeys;
-};
 
 var createEnsureIndexQueries = function(collectionIndex, statementData) {
   collectionIndex.forEach(function(collection) {
@@ -100,4 +95,25 @@ var createEnsureIndexQueries = function(collectionIndex, statementData) {
 var buildIndexQuery = function(collection, query) {
   var ensureIndex = 'db.' + collection + '.ensureIndex(' + query + ');';
   console.log(ensureIndex);
+};
+
+var sortObjectByKey = function(obj){
+    var keys = [];
+    var sorted_obj = {};
+
+    for (var key in obj){
+        if(obj.hasOwnProperty(key)){
+            keys.push(key);
+        }
+    }
+
+    // sort keys
+    keys.sort();
+
+    // create new array based on Sorted Keys
+    keys.forEach(function(key){
+        sorted_obj[key] = obj[key];
+    });
+
+    return sorted_obj;
 };
