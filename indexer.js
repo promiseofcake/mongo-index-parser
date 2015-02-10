@@ -49,7 +49,6 @@ fs.readFile(fileName, 'utf8', function (err,data) {
 
     // index keys
     var indexKey = jsonData[i].key;
-    indexKey = sortObjectByKey(indexKey);
 
     // index query options
     var queryOptions = {};
