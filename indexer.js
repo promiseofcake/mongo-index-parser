@@ -1,12 +1,10 @@
 #!/usr/bin/env node
 // script to parse system.index json into ensureindex queries
 // to obtain index list from mongo:
-// mongoexport --host {hostname} {dbname} --username {username} --password {password} -d {dbname} -c system.indexes --jsonArray -o {outputfilename}.json
+// mongoexport --host {hostname} --authenticationDatabase admin --username {username} --password {password} -d {dbname} -c system.indexes --jsonArray -o {outputfilename}.json
 
 // pass filename as argument to the indexer.js file.
 // ex: node indexer.js vsco.json
-
-fs = require('fs');
 
 var fileName = process.argv.slice(2)[0];
 
