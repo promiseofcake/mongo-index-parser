@@ -49,6 +49,9 @@ fs.readFile(fileName, 'utf8', function (err,data) {
 
     // index keys
     var indexKey = jsonData[i].key;
+    if (JSON.stringify(indexKey) === '{"_id":1}') {
+      continue;
+    }
 
     // index query options
     var queryOptions = {};
