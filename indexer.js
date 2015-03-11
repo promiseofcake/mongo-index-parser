@@ -6,6 +6,8 @@
 // pass filename as argument to the indexer.js file.
 // ex: node indexer.js vsco.json
 
+fs = require('fs');
+
 var fileName = process.argv.slice(2)[0];
 
 // skipped collections
