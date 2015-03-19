@@ -1,16 +1,13 @@
 #!/usr/bin/env node
 // script to parse system.index json into ensureindex queries
-// to obtain index list from mongo:
-// mongoexport --host {hostname} --authenticationDatabase admin --username {username} --password {password} -d {dbname} -c system.indexes --jsonArray -o {outputfilename}.json
-
-// pass filename as argument to the indexer.js file.
-// ex: node indexer.js vsco.json
+// to obtain index list from mongo run ./download_index.sh after modifying properties
+// pass filename as argument to the indexer.js file. ex: ./indexer.js vsco.json > vsco.js
 
 fs = require('fs');
 
 var fileName = process.argv.slice(2)[0];
 
-// skipped collections
+// skipped collections that we don't want to look over
 var skippedCollections = [
   'system'
 ];
@@ -25,12 +22,13 @@ var options = [
   'expireAfterSeconds'
 ];
 
+// read in the raw index dump
 fs.readFile(fileName, 'utf8', function (err,data) {
   if (err) {
     return console.log('Error! file does not exist: ' + fileName);
   }
 
-  // parsed commands
+  // parsed index commands
   var results = {};
 
   // convert file to JSON object (array of objects)
@@ -47,7 +45,7 @@ fs.readFile(fileName, 'utf8', function (err,data) {
       continue;
     }
 
-    // index keys
+    // check for the main index keys, don't re-create those
     var indexKey = jsonData[i].key;
     if (JSON.stringify(indexKey) === '{"_id":1}') {
       continue;
