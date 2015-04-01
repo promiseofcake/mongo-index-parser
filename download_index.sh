@@ -8,18 +8,15 @@ echo 'Script used to dump remote Mongo indices, and download over SCP for local 
 
 USER=$(whoami)   #User running command
 #REMOTE_HOST=''  #Remote host with mongos access to cluster of choice
-#MONGO_USER=''   #Mongo DB User
-#MONGO_PASS=''   #Mongo DB Password
 #MONGO_DB=''     #Mongo DB for which to get indexes
 
 set -exu
 
 # Ensure all variables are bound
-echo "$REMOTE_HOST $MONGO_USER $MONGO_PASS $MONGO_DB" > /dev/null 2>&1
+echo "$REMOTE_HOST $MONGO_DB" > /dev/null 2>&1
 
 # Connect to remote host, export Index records and upload to S3
-ssh ${USER}@${REMOTE_HOST} -- "(mongoexport --authenticationDatabase admin --username ${MONGO_USER} \
- --password ${MONGO_PASS} -d ${MONGO_DB} -c system.indexes --jsonArray -o ${MONGO_DB}.json)"
+ssh ${USER}@${REMOTE_HOST} -- "(mongoexport -d ${MONGO_DB} -c system.indexes --jsonArray -o ${MONGO_DB}.json)"
 
 # Download from Remote Server
 scp ${USER}@${REMOTE_HOST}:${MONGO_DB}.json .
