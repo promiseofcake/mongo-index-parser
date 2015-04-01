@@ -14,8 +14,6 @@ To receive a JSON document containing the indexes for a given DB, modify the `do
 ```
 USER=$(whoami)  #User running command
 REMOTE_HOST=''  #Remote host with mongos access to cluster of choice
-MONGO_USER=''   #Mongo DB User
-MONGO_PASS=''   #Mongo DB Password
 MONGO_DB=''     #Mongo DB for which to get indexes
 ```
 
